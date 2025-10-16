@@ -1,0 +1,77 @@
+ssh-keygen
+ssh-copy-id
+find -name authorized_keys
+cat ./.ssh/authorized_keys
+cat .ssh/*pub
+useradd -m -s /bin/bash user1
+adduser user2
+adduser user3
+usermod -s /usr/sbin/nologin user3
+su user3
+su -s /bin/bash user3 
+exit
+groupadd group1
+usermod -a -G group1 user1
+usermod -a -G group1 user2
+usermod -a -G group1 user3
+groups user1 user2 user3
+mkdir -p /opt/share
+chgrp group1 /opt/share
+chmod g+rwxs /opt/share
+bash -c 'echo "umask 0027" >> /home/user1/.bashrc'
+su user1
+touch /opt/share/12.txt
+touch /opt/share/13.txt
+su user2
+touch /opt/share/21.txt
+touch /opt/share/23.txt
+su -s /bin/bash user3
+touch /opt/share/31.txt
+touch /opt/share/32.txt
+rm /opt/share/13.txt
+rm /opt/share/23.txt
+su user2
+rm /opt/share/12.txt
+rm /opt/share/32.txt
+chmod +t /opt/share
+su -s /bin/bash user3
+touch /opt/share/31.txt
+touch /opt/share/32.txt
+rm /opt/share/12.txt
+rm /opt/share/32.txt
+su user1
+rm /opt/share/21.txt
+rm /opt/share/31.txt
+su root
+su -s /bin/bash user3
+rm /opt/share/13.txt
+rm /opt/share/23.txt
+sudo visudo -f /etc/sudoers.d/user1_dmesg
+sudo chmod 0440 /etc/sudoers.d/user1_dmesg
+sudo visudo -c
+sudo nano /usr/local/bin/dmesg_wrapper.sh
+sudo chmod +x /usr/local/bin/dmesg_wrapper.sh
+sudo chown root:root /usr/local/bin/dmesg_wrapper.sh
+sudo chmod 4755 /usr/local/bin/dmesg_wrapper.sh
+ls -l /usr/local/bin/dmesg_wrapper.sh
+chage -M 10 user1
+chage -M 10 user2
+chage -M 10 user3
+vi /etc/motd
+rsync -av /etc/ /root/etc_backup/
+tar -czf /root/etc_backup.tar.gz /root/etc_backup
+tar -cjf /root/etc_backup.tar.bz2 /root/etc_backup
+tar -cJf /root/etc_backup.tar.7z /root/etc_backup
+ls -lh /root/etc_backup.tar.*
+echo "Обновлено: $(date '+%d.%m.%Y %H:%M:%S')" | sudo tee /etc/motd
+rsync -av /etc/ /root/etc_backup/
+tar -czf /root/etc_backup.tar.gz /root/etc_backup
+mkdir -p /tmp/bzip2_extract
+tar -xjf /root/etc_backup.tar.bz2 -C /tmp/bzip2_extract
+ls -a /tmp/bzip2_extract/root/etc_backup/
+diff -r /tmp/bzip2_extract/root/etc_backup/ /root/etc_backup/
+mkdir -p /root/etc_backup_gzip
+tar -xzf /root/etc_backup.tar.gz -C /root/etc_backup_gzip
+mkdir -p /root/etc_backup_7zip
+7z x /root/etc_backup.tar.7z -o/root/etc_backup_7zip
+diff /root/etc_backup_gzip/root/etc_backup/motd /root/etc_backup_7zip/root/etc_backup/motd

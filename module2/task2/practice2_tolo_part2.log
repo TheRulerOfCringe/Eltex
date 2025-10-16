@@ -1,0 +1,14 @@
+BOOT_TIME=$(journalctl -b -n1 --output=short-iso | head -1 | cut -d' ' -f1)
+END_TIME=$(date -d"$BOOT_TIME 20 seconds" +%Y-%m-%dT%H:%M:%S)
+journalctl -b --since="$BOOT_TIME" --until="$END_TIME"
+find /var/log -name "auth.log" -type f
+awk '{print $5}' /var/log/auth.log | sed 's/\[.*\]//' | sort | sort -nr
+awk '{print $5}' /var/log/auth.log | sed 's/\[.*\]//' | sort | uniq -c | sort -nr
+grep "/usr/sbin/nologin" /etc/passwd | cut -d: -f1,3 | sort -t: -nrk2 | while IFS=: read user uid; do
+    groups=$(grep ":$user," /etc/group | cut -d: -f1 | tr '\n' ',' | sed 's/,$//')
+    echo "$uid, $user, $groups"
+done
+dmesg | grep kernel
+wc -l /var/log/kern.log
+awk '/Commandline:/{c=$0} /Start-Date:/{s=$0} /End-Date:/{print c " ; " s " ; " $0}' /var/log/apt/history.log
+

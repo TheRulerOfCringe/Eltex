@@ -1,0 +1,33 @@
+git config --global user.name "TheRulerOfCringe"
+git config --global user.email "ilya.tolo@mail.ru"
+git config --global init.defaultBranch main
+apt update
+apt install git gh
+gh auth login
+gh auth setup-git --hostname github.com
+gh auth status
+gh repo create --public Eltex
+mkdir ~/Eltex && cd ~/Eltex
+echo "# Репозиторий для сдачи модулей в школе Элтекса" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/TheRulerOfCringe/Eltex.git
+git status
+git push -u origin main
+mkdir -p module1/task1
+mkdir module1/task2
+mkdir module1/task3
+scp "Task1.pdf" root@172.16.9.214:~/Eltex/module1/task1/
+scp "Task2.pdf" root@172.16.9.214:~/Eltex/module1/task2/
+scp "Task3.pdf" root@172.16.9.214:~/Eltex/module1/task3/
+ls -R .
+git add .
+git status
+git commit -m "3 Tasks added"
+git push
+mkdir ~/EltexClone && cd ~/EltexClone
+git clone https://github.com/TheRulerOfCringe/Eltex.git .
+mkdir -p module2/task1
+

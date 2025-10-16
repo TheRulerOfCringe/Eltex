@@ -1,0 +1,261 @@
+Лог работы – команды и результаты в записать в файл practice2_${MYUSER}_part3.log, где MYUSER – переменная с именем пользователя практики 1.
+
+1. Зарегистрируйтесь на сайте github.com, если еще не сделали этого ранее
+
+
+Делал это ранее https://github.com/TheRulerOfCringe
+
+
+2. Установите параметры git в соответствии с вашими учетными данными:
+	git config --global user.name "имя пользователя github"
+	git config --global user.email  "ваш e-mail, использованный при регистрации"
+	git config --global init.defaultBranch main
+
+root@eltex-practice2-pg2-v14:~# git config --global user.name "TheRulerOfCringe"
+root@eltex-practice2-pg2-v14:~# git config --global user.email "ilya.tolo@mail.ru"
+root@eltex-practice2-pg2-v14:~# git config --global init.defaultBranch main
+
+
+
+3. Установите непосредственно программу git и набор утилит для управления github из командной строки gh:
+apt update
+apt install git gh
+
+root@eltex-practice2-pg2-v14:~# apt install git gh
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+git is already the newest version (1:2.43.0-1ubuntu7.3).
+git set to manually installed.
+gh is already the newest version (2.45.0-1ubuntu0.3).
+0 upgraded, 0 newly installed, 0 to remove and 83 not upgraded.
+root@eltex-practice2-pg2-v14:~#
+
+
+4. Создайте ключ ssh: 
+ssh-keygen -t ed25519 -f ~/.ssh/название_ключа (имя пользователя github или имя пользователя для первой практики, или на ваш вкус)
+
+
+root@eltex-practice2-pg2-v14:~# ssh-keygen -t ed25519 -f ~/.ssh/TheRulerOfCringe
+Generating public/private ed25519 key pair.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /root/.ssh/TheRulerOfCringe
+Your public key has been saved in /root/.ssh/TheRulerOfCringe.pub
+The key fingerprint is:
+SHA256:YuH6/Fr24e5FmF3es3u8Yg53u2FkLNRGMW/AIILjdfw root@eltex-practice2-pg2-v14
+The key's randomart image is:
++--[ED25519 256]--+
+|       .... .o.+.|
+|      o ..o.  +.o|
+|     ..o . . ..oo|
+|     ...   +Eooo |
+|      + S o o..=.|
+|     o .   .  + o|
+|    .   o .... * |
+|     o o o oooo *|
+|      +o.o= o..=+|
++----[SHA256]-----+
+
+
+5. Подключите этот комьютер к github:
+	 gh auth login
+	? What account do you want to log into? GitHub.com
+	? What is your preferred protocol for Git operations on this host? SSH
+	? Upload your SSH public key to your GitHub account? /root/.ssh/название_ключа.pub
+	? Title for your SSH key: eltex-practice2-pgX-vY
+	? How would you like to authenticate GitHub CLI? Login with a web browser
+	Если вы выполняете команды из текстовой консоли, то браузер не откроется автоматически, необходимо на вашем рабочем компьютере открыть сайт https://github.com/login/device и ввести код авторизации из лога: «First copy your one-time code: …»
+
+
+root@eltex-practice2-pg2-v14:~# gh auth login
+? What account do you want to log into? GitHub.com
+? What is your preferred protocol for Git operations on this host? SSH
+? Upload your SSH public key to your GitHub account? /root/.ssh/TheRulerOfCringe.pub
+? Title for your SSH key: eltex-practice2-pg2-v14
+? How would you like to authenticate GitHub CLI? Login with a web browser
+
+! First copy your one-time code: C261-80B2
+Press Enter to open github.com in your browser...
+! Failed opening a web browser at https://github.com/login/device
+  exec: "xdg-open,x-www-browser,www-browser,wslview": executable file not found in $PATH
+  Please try entering the URL in your browser manually
+✓ Authentication complete.
+- gh config set -h github.com git_protocol ssh
+✓ Configured git protocol
+! Authentication credentials saved in plain text
+✓ Uploaded the SSH key to your GitHub account: /root/.ssh/TheRulerOfCringe.pub
+✓ Logged in as TheRulerOfCringe
+root@eltex-practice2-pg2-v14:~#
+
+
+6. Укажите автоматическую авторизацию только для сайта github.com:
+gh auth setup-git --hostname github.com
+
+
+root@eltex-practice2-pg2-v14:~# gh auth setup-git --hostname github.com
+
+
+7. Убедиться, что все в порядке можно командой: gh auth status
+
+
+root@eltex-practice2-pg2-v14:~# gh auth status
+github.com
+  ✓ Logged in to github.com account TheRulerOfCringe (/root/.config/gh/hosts.yml)
+  - Active account: true
+  - Git operations protocol: ssh
+  - Token: gho_************************************
+  - Token scopes: 'admin:public_key', 'gist', 'read:org', 'repo'
+
+
+8. Создайте репозиторий на сервере github:
+gh repo create --public название_репозитория
+
+
+root@eltex-practice2-pg2-v14:~# gh repo create --public Eltex
+✓ Created repository TheRulerOfCringe/Eltex on GitHub
+  https://github.com/TheRulerOfCringe/Eltex
+
+
+9. Пора наполнить его:
+	mkdir ~/название_репозитория && cd ~/название_репозитория
+	echo "# краткое_описание_репозитория" >> README.md
+	git init
+	git add README.md
+	git commit -m "first commit"
+	git branch -M main
+	git remote add origin https://github.com/имя_пользователя_github/название_репозитория.git
+	git status
+	git push -u origin main
+	mkdir -p module1/task1
+	mkdir module1/task2
+	mkdir module1/task3
+	(скопируйте с сервера для 1 практики отчеты в каталоги task* используя команду scp)
+	git add .
+	git status
+	git commit (введите комментарий)
+	git push
+
+
+root@eltex-practice2-pg2-v14:~# mkdir ~/Eltex && cd ~/Eltex
+root@eltex-practice2-pg2-v14:~/Eltex# echo "# Репозиторий для сдачи модулей в школе Элтекса" >> README.md
+root@eltex-practice2-pg2-v14:~/Eltex# git init
+Initialized empty Git repository in /root/Eltex/.git/
+root@eltex-practice2-pg2-v14:~/Eltex# git add README.md
+root@eltex-practice2-pg2-v14:~/Eltex# git commit -m "first commit"
+[main (root-commit) eaec65d] first commit
+ 1 file changed, 1 insertion(+)
+ create mode 100644 README.md
+root@eltex-practice2-pg2-v14:~/Eltex# git branch -M main
+root@eltex-practice2-pg2-v14:~/Eltex# git remote add origin https://github.com/TheRulerOfCringe/Eltex.git
+root@eltex-practice2-pg2-v14:~/Eltex# git status
+On branch main
+nothing to commit, working tree clean
+root@eltex-practice2-pg2-v14:~/Eltex# git push -u origin main
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Delta compression using up to 2 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 292 bytes | 292.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
+To https://github.com/TheRulerOfCringe/Eltex.git
+ * [new branch]      main -> main
+branch 'main' set up to track 'origin/main'.
+root@eltex-practice2-pg2-v14:~/Eltex# mkdir -p module1/task1
+root@eltex-practice2-pg2-v14:~/Eltex# mkdir module1/task2
+root@eltex-practice2-pg2-v14:~/Eltex# mkdir module1/task3
+
+eltex-pg2-v14@eltex-2025-autumn-14:03>scp "Task1.pdf" root@172.16.9.214:~/Eltex/module1/task1/
+Task1.pdf                                     100%  346KB  96.9MB/s   00:00
+eltex-pg2-v14@eltex-2025-autumn-14:03>scp "Task2.pdf" root@172.16.9.214:~/Eltex/module1/task2/
+Task2.pdf                                     100%  306KB  93.1MB/s   00:00
+eltex-pg2-v14@eltex-2025-autumn-14:03>scp "Task3.pdf" root@172.16.9.214:~/Eltex/module1/task3/
+Task3.pdf                                     100%  201KB  94.1MB/s   00:00
+eltex-pg2-v14@eltex-2025-autumn-14:03>
+
+root@eltex-practice2-pg2-v14:~/Eltex# ls -R .
+.:
+module1  README.md
+
+./module1:
+task1  task2  task3
+
+./module1/task1:
+Task1.pdf
+
+./module1/task2:
+Task2.pdf
+
+./module1/task3:
+Task3.pdf
+
+root@eltex-practice2-pg2-v14:~/Eltex# git add .
+root@eltex-practice2-pg2-v14:~/Eltex# git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        new file:   module1/task1/Task1.pdf
+        new file:   module1/task2/Task2.pdf
+        new file:   module1/task3/Task3.pdf
+
+root@eltex-practice2-pg2-v14:~/Eltex# git commit -m "3 Tasks added"
+[main ca04a01] 3 Tasks added
+ 3 files changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 module1/task1/Task1.pdf
+ create mode 100644 module1/task2/Task2.pdf
+ create mode 100644 module1/task3/Task3.pdf
+root@eltex-practice2-pg2-v14:~/Eltex# git push
+Enumerating objects: 10, done.
+Counting objects: 100% (10/10), done.
+Delta compression using up to 2 threads
+Compressing objects: 100% (6/6), done.
+Writing objects: 100% (9/9), 777.18 KiB | 35.33 MiB/s, done.
+Total 9 (delta 0), reused 0 (delta 0), pack-reused 0
+To https://github.com/TheRulerOfCringe/Eltex.git
+   eaec65d..ca04a01  main -> main
+root@eltex-practice2-pg2-v14:~/Eltex#
+
+
+10. Клонируйте ваш репозиторий:
+	mkdir ~/название_репозитория_clone && cd ~/название_репозитория_clone
+	git clone https://github.com/имя_пользователя_github/название_репозитория.git . (nb! точка)
+
+
+root@eltex-practice2-pg2-v14:~/Eltex# mkdir ~/EltexClone && cd ~/EltexClone
+root@eltex-practice2-pg2-v14:~/EltexClone# git clone https://github.com/TheRulerOfCringe/Eltex.git .
+Cloning into '.'...
+remote: Enumerating objects: 12, done.
+remote: Counting objects: 100% (12/12), done.
+remote: Compressing objects: 100% (8/8), done.
+remote: Total 12 (delta 0), reused 12 (delta 0), pack-reused 0 (from 0)
+Receiving objects: 100% (12/12), 777.43 KiB | 1.62 MiB/s, done.
+root@eltex-practice2-pg2-v14:~/EltexClone# ls
+module1  README.md
+root@eltex-practice2-pg2-v14:~/EltexClone#
+
+
+11. Внесите изменение в основном каталоге, не забыв про git add/commit/push, выполните в каталоге с клоном: 
+	git fetch 
+	git log origin/main
+	git diff main origin/main
+	git merge (для автоматического слияния используйте git pull вместо fetch+merge)
+
+
+root@eltex-practice2-pg2-v14:~/EltexClone# mkdir -p module2/task1
+root@eltex-practice2-pg2-v14:~/EltexClone# mkdir module2/task2
+root@eltex-practice2-pg2-v14:~/EltexClone# mkdir module2/task3
+
+
+12. Повторите п.9 начиная с создания каталогов для отчета по второй практике
+
+
+
+
+13. Отправьте ссылку на ваш репозиторий преподавателю в telegram, если в имени нет ФИО – дополните сообщение, пожалуйста. Вы конечно представлялись в общем чате, но искать в истории немножко тоскливо.
+
+
+
+
+
