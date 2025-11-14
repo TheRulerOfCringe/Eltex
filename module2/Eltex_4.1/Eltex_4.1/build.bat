@@ -1,0 +1,1 @@
+gcc DSK.c -o program

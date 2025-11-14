@@ -1,0 +1,1 @@
+gcc OSP.c -o program

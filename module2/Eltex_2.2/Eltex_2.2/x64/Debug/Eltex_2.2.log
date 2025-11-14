@@ -1,0 +1,4 @@
+﻿  Calc.c
+C:\Users\ilyat\source\repos\Eltex_2.2\Eltex_2.2\Calc.c(89,1): warning C4715: int_calc: значение возвращается не при всех путях выполнения
+C:\Users\ilyat\source\repos\Eltex_2.2\Eltex_2.2\Calc.c(185,1): warning C4715: float_calc: значение возвращается не при всех путях выполнения
+  Eltex_2.2.vcxproj -> C:\Users\ilyat\source\repos\Eltex_2.2\x64\Debug\Eltex_2.2.exe

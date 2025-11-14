@@ -1,0 +1,3 @@
+﻿  Tree.c
+C:\Users\ilyat\source\repos\Eltex_4.3\Eltex_4.3\Tree.c(57,1): warning C5082: второй аргумент для "va_start" не является последним именованным параметром
+  Eltex_4.3.vcxproj -> C:\Users\ilyat\source\repos\Eltex_4.3\x64\Debug\Eltex_4.3.exe

@@ -1,0 +1,3 @@
+﻿  Chmod.c
+C:\Users\ilyat\source\repos\Eltex_3.1\Eltex_3.1\Chmod.c(392,13): warning C4101: err: неиспользованная локальная переменная
+  Eltex_3.1.vcxproj -> C:\Users\ilyat\source\repos\Eltex_3.1\x64\Debug\Eltex_3.1.exe

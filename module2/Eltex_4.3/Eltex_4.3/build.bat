@@ -1,0 +1,1 @@
+gcc Tree.c -o program

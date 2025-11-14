@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\ilyat\\source\\repos\\Eltex_4.1\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B5800F69-73ED-40A3-98BF-E2BDEE79D741}|Eltex_4.1\\Eltex_4.1.vcxproj|C:\\Users\\ilyat\\source\\repos\\Eltex_4.1\\Eltex_4.1\\DSK.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{B5800F69-73ED-40A3-98BF-E2BDEE79D741}|Eltex_4.1\\Eltex_4.1.vcxproj|solutionrelative:Eltex_4.1\\DSK.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "DSK.c",
+              "DocumentMoniker": "C:\\Users\\ilyat\\source\\repos\\Eltex_4.1\\Eltex_4.1\\DSK.c",
+              "RelativeDocumentMoniker": "Eltex_4.1\\DSK.c",
+              "ToolTip": "C:\\Users\\ilyat\\source\\repos\\Eltex_4.1\\Eltex_4.1\\DSK.c",
+              "RelativeToolTip": "Eltex_4.1\\DSK.c",
+              "ViewState": "AgIAAPkAAAAAAAAAAAAAwAkBAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2025-11-04T10:03:20.786Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

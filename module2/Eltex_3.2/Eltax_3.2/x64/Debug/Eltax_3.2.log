@@ -1,0 +1,7 @@
+﻿  IP.c
+C:\Users\ilyat\source\repos\Eltax_3.2\Eltax_3.2\IP.c(39,11): warning C4047: функция: "char *const " отличается по уровням косвенного обращения от "char *[16]"
+C:\Users\ilyat\source\repos\Eltax_3.2\Eltax_3.2\IP.c(39,11): warning C4024: snprintf: различные типы для формального и фактического параметров 1
+C:\Users\ilyat\source\repos\Eltax_3.2\Eltax_3.2\IP.c(42,2): warning C4047: return: "char *" отличается по уровням косвенного обращения от "char *[16]"
+C:\Users\ilyat\source\repos\Eltax_3.2\Eltax_3.2\IP.c(92,10): warning C4778: "printf": незавершенная строка форматирования "%"
+C:\Users\ilyat\source\repos\Eltax_3.2\Eltax_3.2\IP.c(42,1): warning C4172: возвращаемый адрес локальной переменной или временного : ip
+  Eltax_3.2.vcxproj -> C:\Users\ilyat\source\repos\Eltax_3.2\x64\Debug\Eltax_3.2.exe
