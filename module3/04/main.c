@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <stdlib.h>
+#include <fcntl.h>
 
 #define MAX_INPUT_LENGTH 64
 #define MAX_ARGS 10
@@ -133,12 +134,215 @@ bool parse_input(char *input, char *argv1[], int *argc1, char *argv2[], int *arg
     return true;
 }
 
+// For perenapravlenie
+void setup_redirection(char *input_file, char *output_file, bool append)
+{
+    // For input
+    if (input_file != NULL)
+    {
+        int fd = open(input_file, O_RDONLY);
+        if (fd == -1)
+        {
+            perror(input_file);
+            exit(1);
+        }
+        dup2(fd, STDIN_FILENO);
+        close(fd);
+    }
+    
+    // For output
+    if (output_file != NULL)
+    {
+        int flags = O_WRONLY | O_CREAT;
+        if (append)
+            flags |= O_APPEND;  // For >>
+        else
+            flags |= O_TRUNC;   // For >
+        
+        int fd = open(output_file, flags, 0666);
+        if (fd == -1)
+        {
+            perror(output_file);
+            exit(1);
+        }
+        dup2(fd, STDOUT_FILENO);
+        close(fd);
+    }
+}
+
+int execute_command2(char *argv[], char *input_file, char *output_file, bool append)
+{
+    pid_t pid = fork();
+    
+    if (pid == -1)
+    {
+        perror("fork failed");
+        return -1;
+    }
+    
+    if (pid == 0)
+    {
+        // Docherniy process
+        setup_redirection(input_file, output_file, append);
+        execvp(argv[0], argv);
+        
+        // execvp in case of success zavershitsya, nishe kod ne poydet
+        perror(argv[0]);
+        exit(127); // "command not found"
+    }
+    else
+    {
+        // wait for Docherniy ending and smotrim na oshibki
+        int status;
+        if (waitpid(pid, &status, 0) == -1)
+        {
+            perror("waitpid failed");
+            return -1;
+        }
+        if (WIFEXITED(status))
+        {
+            const int es = WEXITSTATUS(status);
+            printf("exit status was %d\n", es);
+        }
+    }
+    return 0;
+}
+
+bool parse_input2(char *input, char *argv1[], int *argc1, char **input_file1, char **output_file1, bool *append1, char *argv2[], int *argc2, char **input_file2, char **output_file2, bool *append2, bool *no_pipe)
+{
+    *no_pipe = true;
+    *argc1 = 0;
+    *argc2 = 0;
+    *input_file1 = NULL;
+    *output_file1 = NULL;
+    *append1 = false;
+    *input_file2 = NULL;
+    *output_file2 = NULL;
+    *append2 = false;
+    
+    char *token = strtok(input, " \t\n");
+    
+    // Парсим первую команду
+    while (token != NULL && *argc1 < MAX_ARGS - 1)
+    {
+        if (strcmp(token, "|") == 0)
+        {
+            *no_pipe = false;
+            break;
+        }
+        else if (strcmp(token, "<") == 0)
+        {
+            // Ввод из файла
+            token = strtok(NULL, " \t\n");
+            if (token == NULL)
+            {
+                fprintf(stderr, "Error: no file after '<'\n");
+                return false;
+            }
+            *input_file1 = token;
+        }
+        else if (strcmp(token, ">") == 0)
+        {
+            // Вывод в файл (перезапись)
+            token = strtok(NULL, " \t\n");
+            if (token == NULL)
+            {
+                fprintf(stderr, "Error: no file after '>'\n");
+                return false;
+            }
+            *output_file1 = token;
+            *append1 = false;
+        }
+        else if (strcmp(token, ">>") == 0)
+        {
+            // Вывод в файл (добавление)
+            token = strtok(NULL, " \t\n");
+            if (token == NULL)
+            {
+                fprintf(stderr, "Error: no file after '>>'\n");
+                return false;
+            }
+            *output_file1 = token;
+            *append1 = true;
+        }
+        else
+        {
+            // Обычный аргумент команды
+            argv1[(*argc1)++] = token;
+        }
+        token = strtok(NULL, " \t\n");
+    }
+    argv1[*argc1] = NULL;
+    
+    // Если есть пайп, парсим вторую команду
+    if (!(*no_pipe))
+    {
+        token = strtok(NULL, " \t\n");
+        while (token != NULL && *argc2 < MAX_ARGS - 1)
+        {
+            if (strcmp(token, "|") == 0)
+            {
+                fprintf(stderr, "Error: multiple pipes not supported\n");
+                return false;
+            }
+            else if (strcmp(token, "<") == 0)
+            {
+                // Ввод из файла для второй команды
+                token = strtok(NULL, " \t\n");
+                if (token == NULL)
+                {
+                    fprintf(stderr, "Error: no file after '<'\n");
+                    return false;
+                }
+                *input_file2 = token;
+            }
+            else if (strcmp(token, ">") == 0)
+            {
+                // Вывод в файл для второй команды (перезапись)
+                token = strtok(NULL, " \t\n");
+                if (token == NULL)
+                {
+                    fprintf(stderr, "Error: no file after '>'\n");
+                    return false;
+                }
+                *output_file2 = token;
+                *append2 = false;
+            }
+            else if (strcmp(token, ">>") == 0)
+            {
+                // Вывод в файл для второй команды (добавление)
+                token = strtok(NULL, " \t\n");
+                if (token == NULL)
+                {
+                    fprintf(stderr, "Error: no file after '>>'\n");
+                    return false;
+                }
+                *output_file2 = token;
+                *append2 = true;
+            }
+            else
+            {
+                // Обычный аргумент команды
+                argv2[(*argc2)++] = token;
+            }
+            token = strtok(NULL, " \t\n");
+        }
+        argv2[*argc2] = NULL;
+    }
+    
+    return true;
+}
+
 int main()
 {
     char input[MAX_INPUT_LENGTH];
     char *argv1[MAX_ARGS], *argv2[MAX_ARGS];
     int argc1 = 0, argc2 = 0;
     bool exit = true, no_pipe = true;
+    // Dlya perenapravleniy
+    char *input_file1 = NULL, *output_file1 = NULL;
+    char *input_file2 = NULL, *output_file2 = NULL;
+    bool append1 = false, append2 = false;
     
     printf("Welcome to my interpreter!\nType 'exit' to quit\n\n");
     
@@ -160,7 +364,7 @@ int main()
             continue;
         
         // Parsing input
-        if (!parse_input(input, argv1, &argc1, argv2, &argc2, &no_pipe))
+        if (!parse_input2(input, argv1, &argc1, &input_file1, &output_file1, &append1, argv2, &argc2, &input_file2, &output_file2, &append2, &no_pipe))
             printf("Error in nesting pipes occure!\n");
         else
         {
@@ -179,12 +383,18 @@ int main()
             
             // Executim commandu
             if (no_pipe)
-                execute_command(argv1);
+                execute_command2(argv1, input_file1, output_file1, append1);
             else
                 execute_commands(argv1, argv2);
         }
         argc1 = 0;
         argc2 = 0;
+        input_file1 = NULL;
+        output_file1 = NULL;
+        append1 = false;
+        input_file2 = NULL;
+        output_file2 = NULL;
+        append2 = false;
     }
     
     printf("Poka-poka!\n");
