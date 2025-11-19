@@ -24,17 +24,18 @@ void clear_input_buffer(void)
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
+// Load contacts to program from file
 int load_contacts(void)
 {
-    int fd = open(FILENAME, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-    // O_WRONLY - только запись
-    // O_CREAT - создать если нет
-    // O_TRUNC - очистить файл если существует
+    int fd = open(FILENAME, O_RDONLY);  // Только чтение
+    // O_RDONLY - только чтение (read only)
+    
+    //int fd = open(FILENAME, O_CREAT | O_RDWR, 0666);
+    // O_CREAT - cоздать, если не существует
+    // O_RDWR - запись и чтение
     
     if (fd == -1)
-    {
         return 0;
-    }
     
     struct contact c;
     ssize_t bytes_read;
@@ -47,9 +48,7 @@ int load_contacts(void)
             contact_count++;
             
             if (c.id >= next_id)
-            {
                 next_id = c.id + 1;
-            }
         }
     }
     
@@ -57,11 +56,14 @@ int load_contacts(void)
     return 1;
 }
 
+// Save contacts from program to file
 int save_contacts(void)
 {
-    int fd = open(FILENAME, O_CREAT | O_RDWR, 0666);
-    // O_CREAT - cоздать, если не существует
-    // O_RDWR - запись и чтение
+    int fd = open(FILENAME, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+    // O_WRONLY - только запись
+    // O_CREAT - создать если нет
+    // O_TRUNC - очистить файл если существует
+    
     if (fd == -1)
     {
         perror("Error opening file for writing");
