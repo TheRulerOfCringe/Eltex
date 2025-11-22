@@ -70,7 +70,6 @@ void* receive_messages(void *arg)
                 fflush(stdout);
             }
         }
-        //usleep(100000); // Небольшая задержка для уменьшения нагрузки на CPU
     }
     return NULL;
 }

@@ -83,26 +83,6 @@ int is_client_active(int client_id)
     return 0;
 }
 
-/*
-// Функция для рассылки сообщения всем клиентам
-void broadcast_message(struct message *msg)
-{
-    for (int i = 0; i < MAX_CLIENTS; i++)
-    {
-        if (clients[i].active && clients[i].client_id != msg->sender_id)
-        {
-            struct message broadcast_msg;
-            broadcast_msg.mtype = clients[i].client_id;
-            broadcast_msg.sender_id = msg->sender_id;
-            snprintf(broadcast_msg.mtext, MAX_MSG_SIZE, "%s", msg->mtext);
-            
-            if (msgsnd(msgq_id, &broadcast_msg, sizeof(broadcast_msg) - sizeof(long), 0) == -1)
-                perror("Ошибка отправки сообщения клиенту");
-        }
-    }
-}
-*/
-
 void broadcast_message(struct message *msg)
 {
     for (int i = 0; i < MAX_CLIENTS; i++)
@@ -229,67 +209,6 @@ int main()
         }
     }
     
-    /*
-    // Основной цикл сервера
-    while (1)
-    {
-        //        (id очереди, сообщение, размер без type           , type 0 - ждём первое же сообщение, флаг блокирующий)
-        msg.mtype = 11;
-        if (msgrcv(msgq_id   , &msg     , sizeof(msg) - sizeof(long), 0                                , 0               ) == -1)
-        {
-            perror("msgrcv");
-            continue;
-        }
-
-        // Анализируем тип полученного сообщения
-        int choice = 0;
-        if (msg.mtype == 1)
-            choice = 1;
-        else if (msg.mtype == 10)
-            choice = 2;
-        else if (msg.mtype % 10 == 0)
-            choice = 0;
-        else
-            choice = 0;
-        
-        switch (choice)
-        {
-            case 1:
-                printf("Получено сообщение типа 1 от клиента %d: %s\n", msg.sender_id, msg.mtext);
-                
-                // Обработка сообщений типа 1
-                if (strcmp(msg.mtext, "connect") == 0)
-                {
-                    if (!add_client(msg.sender_id)) // Новый клиент подключается
-                        printf("Достигнуто максимальное количество клиентов\n");
-                }
-                else if (strcmp(msg.mtext, "shutdown") == 0)
-                    remove_client(msg.sender_id); // Клиент отключается
-                else
-                    printf("Неизвестная команда от клиента %d: %s\n", msg.sender_id, msg.mtext); // Неизвестная команда типа 1
-                break;
-                
-            case 2:
-                message_counter++;
-                if (message_counter > 1000)
-                {
-                    printf("ПРЕДУПРЕЖДЕНИЕ: Превышен лимит сообщений (%d)\n", message_counter);
-                    break;
-                }
-                printf("Получено сообщение типа 10 от клиента %d: %s\n", msg.sender_id, msg.mtext);
-                
-                // Обработка сообщений типа 10 - пересылаем всем
-                if (is_client_active(msg.sender_id))
-                    broadcast_message(&msg);
-                else
-                    printf("Клиент %d не зарегистрирован\n", msg.sender_id);
-                break;
-                
-            default:
-                printf("Получено сообщение неизвестного типа %ld от клиента %d: %s\n", msg.mtype, msg.sender_id, msg.mtext);
-        }
-    }
-    */
     
     // Удаляем очередь сообщений
     msgctl(msgq_id, IPC_RMID, NULL);
