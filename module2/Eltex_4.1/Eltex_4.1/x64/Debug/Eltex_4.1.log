@@ -1,6 +1,0 @@
-﻿  DSK.c
-C:\Users\ilyat\source\repos\Eltex_4.1\Eltex_4.1\DSK.c(42,5): warning C4013: memset: нет определения; предполагается "extern" с возвратом типа "int"
-C:\Users\ilyat\source\repos\Eltex_4.1\Eltex_4.1\DSK.c(46,5): warning C4013: strncpy_s: нет определения; предполагается "extern" с возвратом типа "int"
-C:\Users\ilyat\source\repos\Eltex_4.1\Eltex_4.1\DSK.c(148,9): warning C4013: strlen: нет определения; предполагается "extern" с возвратом типа "int"
-C:\Users\ilyat\source\repos\Eltex_4.1\Eltex_4.1\DSK.c(50,1): warning C5082: второй аргумент для "va_start" не является последним именованным параметром
-  Eltex_4.1.vcxproj -> C:\Users\ilyat\source\repos\Eltex_4.1\x64\Debug\Eltex_4.1.exe
