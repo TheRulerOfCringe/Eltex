@@ -7,6 +7,8 @@
 #include <signal.h>
 #include <limits.h>
 
+#define MAX_NUMBERS 10
+
 int running = 1;
 int sem_id = -1;
 union semun
@@ -27,7 +29,7 @@ struct sembuf unlock[2] = {{0, 0, 0}, {0, 1, 0}};
 
 struct shared_data
 {
-    int numbers[10];
+    int numbers[MAX_NUMBERS];
     int count;
     int min;
     int max;
