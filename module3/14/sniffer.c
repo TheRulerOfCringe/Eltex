@@ -93,6 +93,12 @@ int main()
 {
     signal(SIGINT, signal_handler);
     
+    if (getuid() != 0)
+    {
+        printf("Warning: Run like root!\n");
+        exit(1);
+    }
+    
     int raw_socket;
     unsigned char buffer[BUFFER_SIZE];
     
@@ -118,9 +124,6 @@ int main()
             fclose(decoded_file);
         exit(1);
     }
-    
-    if (getuid() != 0)
-        printf("Warning: Not running as root! May not work.\n");
     
     printf("Sniffer started using AF_INET. Listening for UDP packets on port %d...\n", PORT);
     printf("Dump file: %s\n", DUMP_FILENAME);

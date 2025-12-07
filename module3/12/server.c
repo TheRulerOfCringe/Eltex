@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <sys/time.h>
 
 #define PORT 12345
 #define BUFFER_SIZE 1000
@@ -42,6 +43,18 @@ int main()
         exit(1);
     }
     
+    /* Устанавливаем таймаут на прием данных - 1 секунда */
+    struct timeval tv;
+    tv.tv_sec = 1;    // 1 секунда
+    tv.tv_usec = 0;   // 0 микросекунд
+    
+    if(setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0)
+    {
+        perror("setsockopt SO_RCVTIMEO failed");
+        close(sockfd);
+        exit(1);
+    }
+    
     /* Настраиваем адрес сокета */
     if(bind(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0)
     {
@@ -61,6 +74,8 @@ int main()
         /* Ожидаем сообщение от клиента */
         if((n = recvfrom(sockfd, buffer, BUFFER_SIZE-1, 0, (struct sockaddr *) &cliaddr, &clilen)) < 0)
         {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) 
+                continue;
             perror("recvfrom failed");
             continue;
         }
