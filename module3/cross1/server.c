@@ -37,7 +37,7 @@ void signal_handler(int sig)
 }
 
 // Функция для анализа и декодирования UDP пакета
-void decode_udp_packet(const unsigned char *buffer, int size)
+void process_packet(const unsigned char *buffer, int size)
 {
     // buffer → [IP Header][UDP Header][Data]
     struct ip *iph = (struct ip *)buffer;
@@ -85,6 +85,9 @@ void decode_udp_packet(const unsigned char *buffer, int size)
         // Пошла обработка клиента
         char *token = strtok(parse_buf, " ");  // Первая часть
         
+        //printf("\n\n%d\n\n", atoi(token));
+        
+        // Если наш же пикет, то мы игнорируем (хотя +1 пойманный пакет всё равно засчитывается)
         bool is_our_packet = false;
         for (int i = 0; i < MAX_CLIENTS; i++)
         {
@@ -97,7 +100,7 @@ void decode_udp_packet(const unsigned char *buffer, int size)
 
         if (is_our_packet)
         {
-            printf("Ignoring packet from ourselves (port %d)\n", ntohs(udph->uh_sport));
+            printf("Ignoring packet from us (port %d)\n", ntohs(udph->uh_sport));
             return;
         }
 
@@ -260,7 +263,7 @@ int main()
             // Минимум 28 байт для валидного UDP/IP пакета
             if (data_size >= sizeof(struct ip) + sizeof(struct udphdr))
             {
-                decode_udp_packet(buffer, data_size);
+                process_packet(buffer, data_size);
                 packet_count++;
             }
         } 
@@ -311,8 +314,6 @@ int main()
             servaddr.sin_family = AF_INET;
             servaddr.sin_port = clients[i].server_port;
             servaddr.sin_addr.s_addr = clients[i].server_ip;
-                            
-            //check_port_status(servaddr.sin_port);
             
             /* Настраиваем адрес сокета */
             if (bind(sock_shotdown, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0)
