@@ -210,7 +210,7 @@ void process_packet(const unsigned char *buffer, int size)
                     
                     close(sock_responce);
                     
-                    printf("Intercepted UDP packet:\n");
+                    printf("Packet info:\n");
                     printf("From: %s:%d\n", source_ip, source_port);
                     printf("To: %s:%d\n", dest_ip, dest_port);
                     printf("Data %d bytes: \"%s\"\n\n", data_len, message_copy);
