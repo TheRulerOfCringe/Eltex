@@ -13,6 +13,7 @@
 #define MAX_EVENTS 10
 #define MAX_DRIVERS 10
 #define BUFFER_SIZE 1024
+#define CMD_BUFFER_SIZE 128
 
 bool running = true;
 
@@ -108,7 +109,7 @@ int create_driver()
             {
                 if (events[n].data.fd == sv[1])
                 {
-                    char cmd[BUFFER_SIZE];
+                    char cmd[CMD_BUFFER_SIZE];
                     ssize_t bytes_cmd = read(sv[1], cmd, sizeof(cmd) - 1);
                     cmd[bytes_cmd] = '\0';
                     printf("Получено от родителя: '%s'\n", cmd);
@@ -161,7 +162,7 @@ int create_driver()
                         {
                             //char cmp_s_responce[BUFFER_SIZE];
                             //sprintf(cmp_s_responce, "s %d", busy);
-                            char cmp_s_responce[BUFFER_SIZE];
+                            char cmp_s_responce[CMD_BUFFER_SIZE];
                             sprintf(cmp_s_responce, "s %d", busy);
                             write(sv[1], cmp_s_responce, strlen(cmp_s_responce));
                         }
@@ -287,7 +288,17 @@ int main()
                 buf[strcspn(buf, "\n")] = '\0';
                 printf("Text: \"%s\"\n", buf);
                 
+                if (strlen(buf) == 0)
+                {
+                    continue;
+                }
+                
                 char *token = strtok(buf, " ");
+                
+                if (token == NULL)
+                {
+                    continue;
+                }
                 
                 // Выбор команд начнётся тут
                 if (strcmp(token, "help") == 0)
@@ -320,7 +331,7 @@ int main()
                             perror("epoll_ctl: sv");
                             exit(EXIT_FAILURE);
                         }
-                        char cmp_n[BUFFER_SIZE];
+                        char cmp_n[CMD_BUFFER_SIZE];
                         sprintf(cmp_n, "n %d", free_driver);
                         write(drivers[free_driver].sv, cmp_n, strlen(cmp_n));
                         free_driver++;
@@ -344,23 +355,32 @@ int main()
                         else
                         {
                             int task_timer = atoi(token);
-                            token = strtok(NULL, " ");
-                            if (token != NULL)
+                            
+                            if (task_timer <= 0)
                             {
-                                printf("Extra keys in command line.\n");
+                                printf("Error in <task_timer> key. Usage: send_task <pid> <task_timer>.\n");
                             }
                             else
                             {
-                                int num_to_send_task = find_num_by_pid(pid_to_send_task);
-                                if (num_to_send_task < 0)
+                            
+                                token = strtok(NULL, " ");
+                                if (token != NULL)
                                 {
-                                    printf("There is no driver with such pid. No one was given a task.\n");
+                                    printf("Extra keys in command line.\n");
                                 }
                                 else
                                 {
-                                    char cmp_t[BUFFER_SIZE];
-                                    sprintf(cmp_t, "t %d", task_timer);
-                                    write(drivers[num_to_send_task].sv, cmp_t, strlen(cmp_t));
+                                    int num_to_send_task = find_num_by_pid(pid_to_send_task);
+                                    if (num_to_send_task < 0)
+                                    {
+                                        printf("There is no driver with such pid. No one was given a task.\n");
+                                    }
+                                    else
+                                    {
+                                        char cmp_t[CMD_BUFFER_SIZE];
+                                        sprintf(cmp_t, "t %d", task_timer);
+                                        write(drivers[num_to_send_task].sv, cmp_t, strlen(cmp_t));
+                                    }
                                 }
                             }
                         }
